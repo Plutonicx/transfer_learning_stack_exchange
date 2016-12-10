@@ -16,11 +16,6 @@ import sys
 
 # warning this will need to be run on a machine with a shit ton of memory!
 
-
-
-num_components = int(sys.argv[1])
-
-
 #num_components = 20
 
 
@@ -57,12 +52,11 @@ vectorizer = CountVectorizer(analyzer=partial(nltk.regexp_tokenize, pattern=patt
 corpus = overallFrame['tags_clean'].tolist()
 Y = vectorizer.fit_transform(corpus)
 
+X_dense = X[1:2000,1:1000].toarray()
+#X_dense = X.toarray()
 
-#X_dense = X[1:2000,1:1000].toarray()
-X_dense = X.toarray()
+pca = cPickle.load(open('../pca_model2.p', 'rb'))
 
-pca = RandomizedPCA(n_components=num_components)
+X_reduced = pca.transform(X_dense)
 
-pca.fit(X_dense)
-
-cPickle.dump(pca, open('../pca_model.p', 'wb')) 
+np.save('../X_reduced', X_reduced, allow_pickle=True, fix_imports=True)
